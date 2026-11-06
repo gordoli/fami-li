@@ -12,7 +12,7 @@ Generated with the built-in ImageGen tool from the supplied family photograph. O
 
 The selected design is **04, revised to natural Earth colors**: `04-globe-earth.gif` and `04-globe-earth-sheet.png`. The unselected versions are retained for design history. `prompts.json` contains the exact original prompt set.
 
-The chosen frame is exported to `apps/web/public/brand/fami-li-mark.png` and used for Next.js favicon, app icon, and Apple icon. `apps/web/public/brand/fami-li-mark.gif` is the animated export. The 16:9 social preview is `apps/web/public/og-image.png` (1600×900).
+The chosen frame is exported to `apps/web/public/brand/fami-li-mark.png` and used for Next.js favicon, app icon, and Apple icon. `apps/web/public/brand/fami-li-mark.gif` is the animated export. The current 16:9 social preview is `apps/web/public/og-fami-li-adventures-v2.png` (1600×900): the approved favicon art above the exact title “The Fami-Li Adventures,” typeset in Poppins SemiBold on pure white. `build-social-image.mjs` composes it with Next.js ImageResponse; it fetches the official Google Fonts Poppins TTF when run. The original generated `og-image.png` remains as an earlier design export.
 
 Selected palette-edit prompt: preserve all four people, outfits, poses, frame placement, pixel style, and transparency; change only the purple globe to blue oceans with green/tan land in all eight frames, retaining purple sparkle accents.
 

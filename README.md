@@ -23,7 +23,7 @@ npm start
 - Draggable/touch-scrollable timeline, one year line, staggered entry reveals, and previous/next controls.
 - Layered coverflow destination gallery and an auto-rotating, draggable globe with selectable pins. The globe also supports arrow keys and has a pause control.
 - Full trip stories, dates, travelers, itinerary, and captioned photo viewer. Trip stories sit beside the cover, followed by a masonry gallery with readable tooltips. Arrow keys navigate photos; Escape closes the current dialog.
-- Minimal floating glass controls for Timeline/Gallery/Globe, adding trips, and light/dark preference. Trip views replace these with Edit and a separate back-arrow bubble.
+- Minimal floating glass controls for Timeline/Gallery/Globe, adding trips, and light/dark preference. Light is the default; explicitly saved theme choices persist. Trip views replace these with Edit and a separate back-arrow bubble.
 - Add/edit sheets with image drag-and-drop or file selection, per-image titles/captions, cover selection, and validation. Up to 12 photos per trip, 10 MB each.
 - Browser-local IndexedDB persistence for trips and image previews, including after refresh. No image leaves the browser. If browser storage is blocked or full, a notification explains that the change lasts only for the session.
 - A dimensional custom cursor, soft purple aura, and click particles for fine pointers. Touch devices use their native interaction. Reduced-motion preferences disable decorative movement.
@@ -69,6 +69,6 @@ Stories, traveler names, exact dates, and photographs are sample content for the
 
 ## Brand assets
 
-The selected pixel-chibi family-on-Earth mark supplies the favicon, Apple icon, and animated brand export. The 1600×900 `public/og-image.png` is wired into Open Graph and Twitter metadata. Set `NEXT_PUBLIC_SITE_URL` when deploying at a different origin. Design variants, sprite sheets, animated previews, and prompts are retained under `design/logomark-options`.
+The selected pixel-chibi family-on-Earth mark supplies the favicon, Apple icon, and animated brand export. The white 1600×900 `public/og-fami-li-adventures-v2.png` is wired into Open Graph and Twitter metadata with the public `https://fami-li.vercel.app` origin. Set `NEXT_PUBLIC_SITE_URL` when deploying at a different origin. Design variants, sprite sheets, animated previews, and prompts are retained under `design/logomark-options`. Run `node design/logomark-options/build-social-image.mjs` to rebuild the social card from the approved favicon art and Poppins type.
 
 The on-page family mark loops through twelve generated frames with waves, walking-in-place steps, blinks, and changing Earth continents. A native reduced-motion picture source selects its matching still image.

@@ -59,11 +59,9 @@ export function FamilyAlbum({ trips: initialTrips }: { trips: Trip[] }) {
     try {
       storedTheme = localStorage.getItem("fami-li-theme");
     } catch {
-      /* Use the system theme when browser storage is disabled. */
+      /* Default to light when browser storage is disabled. */
     }
-    const dark = storedTheme
-      ? storedTheme === "dark"
-      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const dark = storedTheme === "dark";
     document.documentElement.dataset.theme = dark ? "dark" : "light";
     // Theme state follows the persisted preference after hydration.
     queueMicrotask(() => {

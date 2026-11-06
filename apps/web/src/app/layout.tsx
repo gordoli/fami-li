@@ -8,33 +8,34 @@ const poppins = Poppins({
   display: "swap",
 });
 const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  "https://fami-li-adventures.trace-7130.chatgpt.site";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://fami-li.vercel.app";
+const socialImage = "/og-fami-li-adventures-v2.png";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Fami-Li Adventures",
+  title: "The Fami-Li Adventures",
   description: "The memories we made along the way. A family travel journal.",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "/",
     siteName: "Fami-Li Adventures",
-    title: "Fami-Li Adventures",
+    title: "The Fami-Li Adventures",
     description: "The memories we made along the way.",
     images: [
       {
-        url: "/og-image.png",
+        url: socialImage,
+        type: "image/png",
         width: 1600,
         height: 900,
-        alt: "Fami-Li Adventures — our pixel-chibi family standing on Earth",
+        alt: "Our family standing on Earth above The Fami-Li Adventures on white",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Fami-Li Adventures",
+    title: "The Fami-Li Adventures",
     description: "The memories we made along the way.",
-    images: ["/og-image.png"],
+    images: [socialImage],
   },
 };
 export default function RootLayout({
