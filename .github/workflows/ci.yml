@@ -14,3 +14,7 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+      - name: Install only the deployable web workspace
+        run: npm ci --workspace=@fami-li/web --include-workspace-root=false --include=dev
+      - name: Build the isolated web workspace
+        run: npm run build --workspace=@fami-li/web

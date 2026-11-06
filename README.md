@@ -59,6 +59,12 @@ npm run build
 
 CI runs these commands on pushes and pull requests. `npm run format` applies Prettier. The repository contains regression tests for date/coordinate validation, safe stored photos, UTC formatting, data completeness, local asset availability, and repository lookups.
 
+## Vercel
+
+Import this repository with **Root Directory** set to `apps/web`. The app's `vercel.json` selects Next.js and installs the web workspace with its development/build dependencies included. Keep the default Next.js build and output settings. No Supabase variables are required for this mock.
+
+The web workspace declares its own TypeScript, framework typings, d3 typings, and Vitest dependency because production type checking includes its colocated tests. CI also builds from a clean app-only install, so successful local builds cannot depend on root-only tooling.
+
 Stories, traveler names, exact dates, and photographs are sample content for the mock. Photo sources are documented in `packages/data/PHOTO-CREDITS.md`; Wimbledon images are representative tennis stock. This prototype is browser-local, not yet a synchronized family backend.
 
 ## Brand assets
