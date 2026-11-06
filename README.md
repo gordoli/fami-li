@@ -1,6 +1,6 @@
 # Fami-Li Adventures
 
-A minimal family travel journal. Browse Iceland (2016), South Africa and Paris (2017), China (2018), Wimbledon (2023), and Greece (2025) through a horizontal timeline, a destination gallery, or a draggable globe.
+A minimal family travel journal. Browse Iceland (2016), South Africa and Paris (2017), China (2018), Wimbledon (2023), and Greece (2025) through a responsive timeline, a destination gallery, or a draggable globe.
 
 ## Run locally
 
@@ -20,7 +20,7 @@ npm start
 
 ## What works
 
-- Draggable/touch-scrollable timeline, one year line, staggered entry reveals, and previous/next controls.
+- Horizontal, draggable timeline on desktop with previous/next controls; a vertical timeline grouped by year on phones. Cards reveal once as they enter view.
 - Layered coverflow destination gallery and an auto-rotating, draggable globe with selectable pins. The globe also supports arrow keys and has a pause control.
 - Full trip stories, dates, travelers, itinerary, and captioned photo viewer. Trip stories sit beside the cover, followed by a masonry gallery with readable tooltips. Arrow keys navigate photos; Escape closes the current dialog.
 - Minimal floating glass controls for Timeline/Gallery/Globe, adding trips, and light/dark preference. Light is the default; explicitly saved theme choices persist. Trip views replace these with Edit and a separate back-arrow bubble.

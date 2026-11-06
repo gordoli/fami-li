@@ -1599,7 +1599,6 @@ html.custom-pointer * {
 }
 @media (max-width: 640px) {
   .album-main {
-    --timeline-card-width: min(78vw, 340px);
     --timeline-year-gap: 28px;
     --coverflow-card-width: min(76vw, 39.5svh, 320px);
   }
@@ -1625,10 +1624,52 @@ html.custom-pointer * {
     margin-bottom: 16px;
   }
   .year-trips {
-    gap: 16px;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .timeline-rail {
+    flex-direction: column;
+    gap: 32px;
+    overflow: visible;
+    padding-bottom: 32px;
+    scroll-snap-type: none;
+    touch-action: pan-y;
+  }
+  .timeline-year-group {
+    position: relative;
+    padding-left: 24px;
+    min-width: 0;
+  }
+  .timeline-year-group::before {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 12px;
+    bottom: -32px;
+    width: 3px;
+    background: color-mix(in srgb, var(--primary) 24%, var(--border));
+  }
+  .timeline-year-group:last-of-type::before {
+    bottom: 0;
+  }
+  .timeline-card {
+    flex: none;
+    width: 100%;
   }
   .timeline-year {
-    height: 44px;
+    height: 40px;
+    font-size: 18px;
+  }
+  .timeline-year::after {
+    display: none;
+  }
+  .timeline-dot {
+    position: absolute;
+    left: -24px;
+  }
+  .timeline-controls,
+  .timeline-end-spacer {
+    display: none;
   }
   .gallery-filters {
     justify-content: flex-start;
@@ -1731,9 +1772,12 @@ html.custom-pointer * {
   white-space: nowrap;
 }
 @media (max-width: 640px) {
+  .floating-controls--timeline {
+    top: calc(16px + env(safe-area-inset-top));
+  }
   .album-intro {
-    padding-top: calc(140px + env(safe-area-inset-top));
-    padding-bottom: 36px;
+    padding-top: calc(88px + env(safe-area-inset-top));
+    padding-bottom: 28px;
   }
   .brand-mark--hero {
     width: 88px;

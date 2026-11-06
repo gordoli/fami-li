@@ -50,7 +50,9 @@ export function FloatingControls({
           </Button>
         </div>
       )}
-      <div className="floating-controls">
+      <div
+        className={`floating-controls${view === "timeline" && !onEdit ? " floating-controls--timeline" : ""}`}
+      >
         {!onEdit && (
           <div
             className="glass-view-chooser"
