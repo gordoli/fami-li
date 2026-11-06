@@ -64,3 +64,5 @@ Stories, traveler names, exact dates, and photographs are sample content for the
 ## Brand assets
 
 The selected pixel-chibi family-on-Earth mark supplies the favicon, Apple icon, and animated brand export. The 1600×900 `public/og-image.png` is wired into Open Graph and Twitter metadata. Set `NEXT_PUBLIC_SITE_URL` when deploying at a different origin. Design variants, sprite sheets, animated previews, and prompts are retained under `design/logomark-options`.
+
+The on-page family mark loops through twelve generated frames with waves, walking-in-place steps, blinks, and changing Earth continents. A native reduced-motion picture source selects its matching still image.

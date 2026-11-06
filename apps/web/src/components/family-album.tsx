@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AnimatePresence,
@@ -18,6 +17,7 @@ import { Globe } from "./globe";
 import { TripStory } from "./trip-story";
 import { TripEditor } from "./trip-editor";
 import { CursorEffects } from "./cursor-effects";
+import { FamilyMark } from "./family-mark";
 import { loadAlbum, saveAlbum, mergeAlbum } from "@/lib/album-storage";
 
 export function FamilyAlbum({ trips: initialTrips }: { trips: Trip[] }) {
@@ -178,11 +178,8 @@ export function FamilyAlbum({ trips: initialTrips }: { trips: Trip[] }) {
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
-              <Image
-                src="/brand/fami-li-mark.png"
-                alt=""
-                width={32}
-                height={32}
+              <FamilyMark
+                size={32}
                 className="brand-mark brand-mark--compact"
               />
               <span className="compact-title-copy">
@@ -200,11 +197,8 @@ export function FamilyAlbum({ trips: initialTrips }: { trips: Trip[] }) {
           >
             {!isCompact && (
               <section className="album-intro page-gutter">
-                <Image
-                  src="/brand/fami-li-mark.png"
-                  alt=""
-                  width={112}
-                  height={112}
+                <FamilyMark
+                  size={112}
                   className="brand-mark brand-mark--hero"
                   priority
                 />

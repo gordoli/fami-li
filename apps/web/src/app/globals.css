@@ -1691,6 +1691,9 @@ html.custom-pointer * {
   object-fit: contain;
   image-rendering: pixelated;
 }
+.family-mark-picture {
+  display: contents;
+}
 .brand-mark--hero {
   display: block;
   width: 112px;

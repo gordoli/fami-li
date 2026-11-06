@@ -1,0 +1,14 @@
+{
+  "width": 1448,
+  "height": 1086,
+  "columns": 4,
+  "rows": 3,
+  "frameCount": 12,
+  "crop": {
+    "x": 17,
+    "y": 23,
+    "width": 330,
+    "height": 290
+  },
+  "fps": 6
+}

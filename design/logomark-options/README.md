@@ -17,3 +17,7 @@ The chosen frame is exported to `apps/web/public/brand/fami-li-mark.png` and use
 Selected palette-edit prompt: preserve all four people, outfits, poses, frame placement, pixel style, and transparency; change only the purple globe to blue oceans with green/tan land in all eight frames, retaining purple sparkle accents.
 
 Social-card prompt: one exact family-and-Earth mark centered on pure white in a 16:9 landscape card; underneath, the exact text “Fami-Li Adventures” in a rounded geometric sans-serif resembling Poppins SemiBold; generous spacing, no other text, borders, or scenery.
+
+## Animated site mark
+
+`06-adventure-loop.gif` is the final 12-frame wave/walk/Earth loop generated with the built-in ImageGen tool. The original frame sheet, exact prompt, and cell metadata are saved alongside it. `build-adventure-loop.mjs` assembles its frames with FFmpeg and exports `fami-li-adventure.gif` plus a matching static poster under `apps/web/public/brand`. The site uses native picture-source selection to show the static poster for reduced-motion users, avoiding hydration differences.
