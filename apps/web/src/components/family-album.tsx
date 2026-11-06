@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AnimatePresence,
@@ -177,7 +178,16 @@ export function FamilyAlbum({ trips: initialTrips }: { trips: Trip[] }) {
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
-              The <span>Fami-Li</span> Adventures
+              <Image
+                src="/brand/fami-li-mark.png"
+                alt=""
+                width={32}
+                height={32}
+                className="brand-mark brand-mark--compact"
+              />
+              <span className="compact-title-copy">
+                The <span className="brand-name">Fami-Li</span> Adventures
+              </span>
             </motion.h1>
           )}
           <motion.main
@@ -190,12 +200,17 @@ export function FamilyAlbum({ trips: initialTrips }: { trips: Trip[] }) {
           >
             {!isCompact && (
               <section className="album-intro page-gutter">
+                <Image
+                  src="/brand/fami-li-mark.png"
+                  alt=""
+                  width={112}
+                  height={112}
+                  className="brand-mark brand-mark--hero"
+                  priority
+                />
                 <h1>
                   The <span>Fami-Li</span> Adventures
                 </h1>
-                <p className="intro-description">
-                  The memories we made along the way
-                </p>
               </section>
             )}
             <div key={view}>
