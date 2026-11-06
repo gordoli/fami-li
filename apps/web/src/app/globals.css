@@ -1107,7 +1107,7 @@ html.custom-pointer * {
   }
   .story-cover-photo {
     height: 300px;
-    grid-row: 2;
+    grid-row: 1;
   }
   .story-cover-row .story-prose > p {
     font-size: 12px;
@@ -1603,16 +1603,14 @@ html.custom-pointer * {
     --coverflow-card-width: min(76vw, 39.5svh, 320px);
   }
   .album-main--compact {
-    padding-top: calc(140px + env(safe-area-inset-top));
+    padding-top: calc(92px + env(safe-area-inset-top));
   }
   .floating-controls {
-    top: calc(64px + env(safe-area-inset-top));
+    top: calc(16px + env(safe-area-inset-top));
     gap: 8px;
   }
   .compact-album-title {
-    top: calc(20px + env(safe-area-inset-top));
-    min-height: 24px;
-    font-size: 18px;
+    display: none;
   }
   .album-intro {
     padding-top: calc(140px + env(safe-area-inset-top));
@@ -1772,9 +1770,6 @@ html.custom-pointer * {
   white-space: nowrap;
 }
 @media (max-width: 640px) {
-  .floating-controls--timeline {
-    top: calc(16px + env(safe-area-inset-top));
-  }
   .album-intro {
     padding-top: calc(88px + env(safe-area-inset-top));
     padding-bottom: 28px;
