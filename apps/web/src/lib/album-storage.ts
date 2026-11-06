@@ -138,3 +138,15 @@ export async function saveAlbum(trips: readonly Trip[]): Promise<void> {
     database.close();
   }
 }
+
+/** Add new mock chapters after updates without replacing this browser's edited trips. */
+export function mergeAlbum(
+  saved: readonly Trip[],
+  seedTrips: readonly Trip[],
+): Trip[] {
+  const savedSlugs = new Set(saved.map((trip) => trip.slug));
+  return [
+    ...saved,
+    ...seedTrips.filter((trip) => !savedSlugs.has(trip.slug)),
+  ].sort((a, b) => a.date.localeCompare(b.date));
+}

@@ -7,38 +7,27 @@ import {
   MotionConfig,
   useReducedMotion,
 } from "motion/react";
-import { ArrowUpRight, Globe2, Images, MoveHorizontal, X } from "lucide-react";
+import { X } from "lucide-react";
+import { TooltipProvider } from "@fami-li/ui";
 import type { Trip } from "@fami-li/data";
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from "@fami-li/ui";
-import { Navbar } from "./navbar";
+import { FloatingControls, type ViewMode } from "./floating-controls";
 import { Timeline } from "./timeline";
 import { Gallery } from "./gallery";
 import { Globe } from "./globe";
 import { TripStory } from "./trip-story";
 import { TripEditor } from "./trip-editor";
 import { CursorEffects } from "./cursor-effects";
-import { loadAlbum, saveAlbum } from "@/lib/album-storage";
+import { loadAlbum, saveAlbum, mergeAlbum } from "@/lib/album-storage";
 
-type ViewMode = "timeline" | "gallery" | "globe";
-const VIEWS = [
-  { id: "timeline", label: "Timeline", icon: MoveHorizontal },
-  { id: "gallery", label: "Gallery", icon: Images },
-  { id: "globe", label: "Globe", icon: Globe2 },
-] as const;
 export function FamilyAlbum({ trips: initialTrips }: { trips: Trip[] }) {
   const [trips, setTrips] = useState(initialTrips);
   const [view, setView] = useState<ViewMode>("timeline");
+  const [isChangingView, setIsChangingView] = useState(false);
+  const viewTransitionTimer = useRef<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [albumRevision, setAlbumRevision] = useState(0);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
   const [isTripOpen, setIsTripOpen] = useState(false);
-  const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [isDark, setIsDark] = useState(false);
@@ -46,13 +35,14 @@ export function FamilyAlbum({ trips: initialTrips }: { trips: Trip[] }) {
   const [notice, setNotice] = useState("");
   const opener = useRef<HTMLElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
+  const isCompact = view !== "timeline";
   const selectedTrip = trips.find((trip) => trip.slug === selectedSlug);
   useEffect(() => {
     let cancelled = false;
     loadAlbum()
       .then((saved) => {
         if (!cancelled) {
-          if (saved?.length) setTrips(saved);
+          if (saved?.length) setTrips(mergeAlbum(saved, initialTrips));
           setIsReady(true);
         }
       })
@@ -81,7 +71,7 @@ export function FamilyAlbum({ trips: initialTrips }: { trips: Trip[] }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [initialTrips]);
   useEffect(() => {
     if (!notice) return;
     const timer = window.setTimeout(() => setNotice(""), 6000);
@@ -95,6 +85,31 @@ export function FamilyAlbum({ trips: initialTrips }: { trips: Trip[] }) {
     setSelectedSlug(trip.slug);
     setIsTripOpen(true);
   }, []);
+  useEffect(
+    () => () => {
+      if (viewTransitionTimer.current !== null)
+        window.clearTimeout(viewTransitionTimer.current);
+    },
+    [],
+  );
+  function changeView(next: ViewMode) {
+    if (viewTransitionTimer.current !== null)
+      window.clearTimeout(viewTransitionTimer.current);
+    if (next === view) {
+      setIsChangingView(false);
+      return;
+    }
+    if (prefersReducedMotion) {
+      setView(next);
+      return;
+    }
+    setIsChangingView(true);
+    viewTransitionTimer.current = window.setTimeout(() => {
+      setView(next);
+      setIsChangingView(false);
+      viewTransitionTimer.current = null;
+    }, 180);
+  }
   function toggleTheme() {
     const next = !isDark;
     setIsDark(next);
@@ -139,103 +154,51 @@ export function FamilyAlbum({ trips: initialTrips }: { trips: Trip[] }) {
   }
   return (
     <MotionConfig reducedMotion="user">
-      <LayoutGroup>
-        <CursorEffects />
-        <Navbar
-          isDark={isDark}
-          onToggleTheme={toggleTheme}
-          onAdd={() => openEditor()}
-          onHome={() => {
-            setIsTripOpen(false);
-            setView("timeline");
-          }}
-          canAdd={isReady}
-        />
-        <motion.main
-          animate={{
-            scale: isTripOpen ? 0.975 : 1,
-            opacity: isTripOpen ? 0.5 : 1,
-          }}
-          transition={{ duration: prefersReducedMotion ? 0 : 0.5 }}
-          className="album-main"
-        >
-          <section className="album-intro page-gutter">
-            <motion.div
-              initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h1>
-                The Adventures
-                <br />
-                of our <span>Fami-Li</span>
-              </h1>
-              <p className="intro-description">
-                The memories we made along the way
-              </p>
-            </motion.div>
-            <span className="intro-side-note">
-              Est. 2016
-              <br />
-              <span>Made of memories.</span>
-            </span>
-          </section>
-          <div className="collection-toolbar page-gutter">
-            <div className="collection-count">
-              <span className="status-dot" />
-              {trips.length} adventures
-              <span className="count-divider" />
-              {trips[0]?.year}—{trips.at(-1)?.year}
-            </div>
-            <div className="view-toggle" role="group" aria-label="Album view">
-              {VIEWS.map(({ id, label, icon: Icon }) => (
-                <button
-                  key={id}
-                  onClick={() => setView(id)}
-                  className={view === id ? "selected" : ""}
-                  aria-pressed={view === id}
-                >
-                  {view === id && (
-                    <motion.span
-                      layoutId="view-pill"
-                      className="view-pill"
-                      transition={{
-                        type: "spring",
-                        stiffness: 400,
-                        damping: 35,
-                      }}
-                    />
-                  )}
-                  <span>
-                    <Icon size={14} />
-                    {label}
-                  </span>
-                </button>
-              ))}
-            </div>
-            <span className="collection-right">
-              A few chapters of us <ArrowUpRight size={12} />
-            </span>
-          </div>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={view}
-              initial={{
-                opacity: 0,
-                y: prefersReducedMotion ? 0 : 16,
-                scale: prefersReducedMotion ? 1 : 0.985,
-              }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{
-                opacity: 0,
-                y: prefersReducedMotion ? 0 : -10,
-                scale: prefersReducedMotion ? 1 : 0.985,
-              }}
+      <TooltipProvider delayDuration={160}>
+        <LayoutGroup>
+          <CursorEffects />
+          {!isTripOpen && (
+            <FloatingControls
+              view={view}
+              onViewChange={changeView}
+              isDark={isDark}
+              onToggleTheme={toggleTheme}
+              onAdd={() => openEditor()}
+              canAdd={isReady}
+            />
+          )}
+          {!isTripOpen && isCompact && (
+            <motion.h1
+              className="compact-album-title"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: isChangingView ? 0 : 1 }}
               transition={{
-                duration: prefersReducedMotion ? 0 : 0.35,
+                duration: prefersReducedMotion ? 0 : 0.18,
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
+              The <span>Fami-Li</span> Adventures
+            </motion.h1>
+          )}
+          <motion.main
+            animate={{
+              scale: isTripOpen ? 0.975 : 1,
+              opacity: isChangingView ? 0 : isTripOpen ? 0.5 : 1,
+            }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.18 }}
+            className={`album-main${isCompact ? " album-main--compact" : ""}`}
+          >
+            {!isCompact && (
+              <section className="album-intro page-gutter">
+                <h1>
+                  The <span>Fami-Li</span> Adventures
+                </h1>
+                <p className="intro-description">
+                  The memories we made along the way
+                </p>
+              </section>
+            )}
+            <div key={view}>
               {view === "timeline" ? (
                 <Timeline
                   key={albumRevision}
@@ -251,91 +214,58 @@ export function FamilyAlbum({ trips: initialTrips }: { trips: Trip[] }) {
                   <Globe trips={trips} onSelect={selectTrip} />
                 </div>
               )}
-            </motion.div>
-          </AnimatePresence>
-        </motion.main>
-        <footer className="album-footer page-gutter">
-          <span>A little family. A big world.</span>
-          <button onClick={() => setIsAboutOpen(true)}>
-            Our little story <ArrowUpRight size={12} />
-          </button>
-          <span className="footer-note">COLLECTING MOMENTS, NOT THINGS.</span>
-        </footer>
-        {selectedTrip && (
-          <TripStory
-            trip={selectedTrip}
-            open={isTripOpen}
-            onOpenChange={setIsTripOpen}
-            onCloseAutoFocus={() =>
-              opener.current?.focus({ preventScroll: true })
-            }
-            onEdit={() => openEditor(selectedTrip)}
-            navbar={
-              <Navbar
-                isDark={isDark}
-                onToggleTheme={toggleTheme}
-                onAdd={() => openEditor()}
-                onHome={() => setIsTripOpen(false)}
-                canAdd={isReady}
-              />
-            }
-          />
-        )}
-        <TripEditor
-          open={isEditorOpen}
-          onOpenChange={setIsEditorOpen}
-          trip={editingTrip}
-          onSave={saveTrip}
-        />
-        <Dialog open={isAboutOpen} onOpenChange={setIsAboutOpen}>
-          <DialogContent className="about-dialog">
-            <Button
-              className="about-close"
-              variant="ghost"
-              size="icon"
-              aria-label="Close our story"
-              onClick={() => setIsAboutOpen(false)}
-            >
-              <X size={18} />
-            </Button>
-            <span className="tiny-star text-primary text-3xl">✳</span>
-            <p className="eyebrow mt-6">A NOTE FROM OUR FAMILY</p>
-            <DialogTitle>
-              Some things deserve
-              <br />
-              to be remembered.
-            </DialogTitle>
-            <DialogDescription>
-              Not just the places. The wrong turns, the long lunches, the little
-              moments in between. This is our place to keep them.
-            </DialogDescription>
-            <p>One family. A few suitcases. A world of stories.</p>
-            <div className="about-mock-note">
-              A working family album prototype with sample stories and stock
-              photographs. Added adventures are saved privately in this browser.
             </div>
-          </DialogContent>
-        </Dialog>
-        <AnimatePresence>
-          {notice && (
-            <motion.div
-              role="status"
-              className="album-toast"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-            >
-              {notice}
-              <button
-                aria-label="Dismiss notification"
-                onClick={() => setNotice("")}
-              >
-                <X size={14} />
-              </button>
-            </motion.div>
+          </motion.main>
+          {selectedTrip && (
+            <TripStory
+              trip={selectedTrip}
+              open={isTripOpen}
+              onOpenChange={setIsTripOpen}
+              onCloseAutoFocus={() =>
+                opener.current?.focus({ preventScroll: true })
+              }
+              onEdit={() => openEditor(selectedTrip)}
+              controls={
+                <FloatingControls
+                  view={view}
+                  onViewChange={changeView}
+                  onEdit={() => openEditor(selectedTrip)}
+                  onBack={() => setIsTripOpen(false)}
+                  isDark={isDark}
+                  onToggleTheme={toggleTheme}
+                  onAdd={() => openEditor()}
+                  canAdd={isReady}
+                />
+              }
+            />
           )}
-        </AnimatePresence>
-      </LayoutGroup>
+          <TripEditor
+            open={isEditorOpen}
+            onOpenChange={setIsEditorOpen}
+            trip={editingTrip}
+            onSave={saveTrip}
+          />
+          <AnimatePresence>
+            {notice && (
+              <motion.div
+                role="status"
+                className="album-toast"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+              >
+                {notice}
+                <button
+                  aria-label="Dismiss notification"
+                  onClick={() => setNotice("")}
+                >
+                  <X size={14} />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </LayoutGroup>
+      </TooltipProvider>
     </MotionConfig>
   );
 }

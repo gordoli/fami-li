@@ -4,19 +4,24 @@ import { describe, expect, it } from "vitest";
 import { getTrip, mockTripRepository, trips } from "./index";
 
 describe("mock trip collection", () => {
-  it("contains the five requested adventures in chronological order", () => {
-    expect(trips).toHaveLength(5);
+  it("contains six adventures with two trips in 2017 in chronological order", () => {
+    expect(trips).toHaveLength(6);
     expect(trips.at(0)?.year).toBe(2016);
     expect(trips.at(-1)?.year).toBe(2025);
     expect(trips.map((trip) => [trip.title, trip.year])).toEqual([
       ["Iceland", 2016],
       ["South Africa", 2017],
+      ["Paris", 2017],
       ["China", 2018],
       ["Wimbledon", 2023],
       ["Greece", 2025],
     ]);
     expect(trips.map((trip) => trip.year)).toEqual(
       trips.map((trip) => trip.year).toSorted((left, right) => left - right),
+    );
+    expect(trips.filter((trip) => trip.year === 2017)).toHaveLength(2);
+    expect(trips.map((trip) => trip.date)).toEqual(
+      trips.map((trip) => trip.date).toSorted(),
     );
     expect(new Set(trips.map((trip) => trip.slug)).size).toBe(trips.length);
   });

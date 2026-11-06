@@ -16,3 +16,9 @@ export {
   SheetClose,
 } from "./components/sheet";
 export { Input, Textarea, Label } from "./components/input";
+export {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "./components/tooltip";

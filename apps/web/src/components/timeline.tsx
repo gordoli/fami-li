@@ -2,15 +2,11 @@
 import { useEffect, useRef, type PointerEvent } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
-import {
-  ArrowLeft,
-  ArrowRight,
-  ArrowUpRight,
-  MoveHorizontal,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Trip } from "@fami-li/data";
 import { Button } from "@fami-li/ui";
 import { formatMonth } from "@/lib/format";
+import { groupTripsByYear } from "@/lib/timeline";
 
 type TimelineProps = {
   trips: readonly Trip[];
@@ -117,77 +113,74 @@ export function Timeline({
           if (nearest.index !== activeIndex) onActiveChange(nearest.index);
         }}
       >
-        {trips.map((trip, index) => (
-          <motion.article
-            key={trip.slug}
-            className={`timeline-card ${index === activeIndex ? "is-active" : ""}`}
-            data-trip-index={index}
-            initial={{
-              opacity: 0,
-              y: reducedMotion ? 0 : 32,
-              scale: reducedMotion ? 1 : 0.96,
-            }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ root: rail, amount: 0.15, once: false }}
-            transition={{
-              duration: reducedMotion ? 0 : 0.7,
-              ease: [0.22, 1, 0.36, 1],
-            }}
+        {groupTripsByYear(trips).map((group) => (
+          <section
+            key={group.year}
+            className={`timeline-year-group ${group.entries.some((entry) => entry.index === activeIndex) ? "year-is-active" : ""}`}
+            aria-label={`${group.year} adventures`}
           >
             <div className="timeline-year">
               <span className="timeline-dot" />
-              <span>{trip.year}</span>
-              {index === 0 && (
-                <span className="beginning-note">the beginning</span>
-              )}
+              <span>{group.year}</span>
             </div>
-            <button
-              className="trip-card-button"
-              onClick={() => onSelect(trip)}
-              aria-label={`Explore ${trip.title}, ${trip.year}`}
-            >
-              <motion.div
-                className="trip-cover"
-                layoutId={`cover-${trip.slug}`}
-                transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <Image
-                  src={trip.cover}
-                  alt={trip.coverAlt}
-                  fill
-                  sizes="(max-width: 640px) 78vw, 340px"
-                  priority={index < 3}
-                  draggable={false}
-                />
-                <span className="cover-arrow">
-                  <ArrowUpRight size={18} />
-                </span>
-                <span className="photo-count">
-                  {trip.photos.length} photograph
-                  {trip.photos.length === 1 ? "" : "s"}
-                </span>
-              </motion.div>
-              <div className="trip-card-caption">
-                <h2>{trip.title}</h2>
-                <p>
-                  {trip.city} <span>·</span> {formatMonth(trip.date)}
-                </p>
-              </div>
-            </button>
-          </motion.article>
+            <div className="year-trips">
+              {group.entries.map(({ trip, index }) => (
+                <motion.article
+                  key={trip.slug}
+                  className={`timeline-card ${index === activeIndex ? "is-active" : ""}`}
+                  data-trip-index={index}
+                  initial={{
+                    opacity: 0,
+                    x: -20,
+                    y: 18,
+                    scale: 0.96,
+                  }}
+                  whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+                  viewport={{ root: rail, amount: 0.15, once: false }}
+                  transition={{
+                    duration: reducedMotion ? 0 : 0.65,
+                    delay: reducedMotion ? 0 : Math.min(index * 0.1, 0.4),
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  <button
+                    className="trip-card-button"
+                    onClick={() => onSelect(trip)}
+                    aria-label={`Explore ${trip.title}, ${trip.year}`}
+                  >
+                    <motion.div
+                      className="trip-cover"
+                      layoutId={`cover-${trip.slug}`}
+                      transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                    >
+                      <Image
+                        src={trip.cover}
+                        alt={trip.coverAlt}
+                        fill
+                        sizes="(max-width: 640px) 78vw, (max-width: 1474px) 280px, (max-width: 3158px) 19vw, 600px"
+                        priority={index < 3}
+                        draggable={false}
+                      />
+                      <span className="cover-arrow">
+                        <ArrowUpRight size={18} />
+                      </span>
+                    </motion.div>
+                    <div className="trip-card-caption">
+                      <h2>{trip.title}</h2>
+                      <p>
+                        {trip.city} <span>·</span> {formatMonth(trip.date)}
+                      </p>
+                    </div>
+                  </button>
+                </motion.article>
+              ))}
+            </div>
+          </section>
         ))}
         <div className="timeline-end-spacer" aria-hidden="true" />
       </div>
       <div className="timeline-controls page-gutter">
-        <div className="drag-hint">
-          <MoveHorizontal size={15} />
-          <span>Drag to wander. Click to remember.</span>
-        </div>
         <div className="flex items-center gap-3">
-          <span className="timeline-counter">
-            {String(activeIndex + 1).padStart(2, "0")}{" "}
-            <span>/ {String(trips.length).padStart(2, "0")}</span>
-          </span>
           <Button
             variant="outline"
             size="icon"
@@ -207,22 +200,6 @@ export function Timeline({
             <ArrowRight size={16} />
           </Button>
         </div>
-      </div>
-      <div className="year-navigation page-gutter" aria-label="Jump to year">
-        {trips.map((trip, index) => (
-          <button
-            key={trip.slug}
-            className={index === activeIndex ? "active" : ""}
-            aria-current={index === activeIndex ? "date" : undefined}
-            onClick={() => goTo(index)}
-          >
-            <span className="year-tick" />
-            {trip.year}
-          </button>
-        ))}
-        <span className="year-present">
-          TO BE CONTINUED <span>↗</span>
-        </span>
       </div>
     </section>
   );

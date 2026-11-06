@@ -17,3 +17,6 @@ All photographs are demonstration images from [Unsplash](https://unsplash.com), 
 - `greece.jpg`: https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e
 - `greece-village.jpg`: https://images.unsplash.com/photo-1533105079780-92b9be482077
 - `greece-coast.jpg`: https://images.unsplash.com/photo-1504512485720-7d83a16ee930
+- `paris.jpg`: https://images.unsplash.com/photo-1502602898657-3e91760cbb34
+- `paris-streets.jpg`: https://images.unsplash.com/photo-1499856871958-5b9627545d1a
+- `paris-river.jpg`: https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f

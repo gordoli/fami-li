@@ -5,9 +5,13 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-poppins);
 }
 :root {
+  --layout-gutter: clamp(20px, 4vw, 144px);
+  --layout-control-size: clamp(44px, 2.2vw, 60px);
+  --layout-text-small: clamp(12px, 0.65vw, 18px);
+  --layout-text-body: clamp(14px, 0.85vw, 24px);
   --background: #fcfbff;
   --foreground: #19161e;
   --primary: #8056d9;

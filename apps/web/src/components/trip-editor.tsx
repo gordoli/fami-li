@@ -360,7 +360,7 @@ function TripEditorForm({
               maxLength={120}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="editor-grid">
             <div className="space-y-2">
               <Label htmlFor="trip-city">
                 City <span aria-hidden="true">*</span>
@@ -388,7 +388,7 @@ function TripEditorForm({
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="editor-grid">
             <div className="space-y-2">
               <Label htmlFor="trip-date">
                 Start date <span aria-hidden="true">*</span>
@@ -465,7 +465,7 @@ function TripEditorForm({
               enter coordinates. Without coordinates, other places appear in the
               trip list until you add a pin.
             </p>
-            <div className="mt-3 grid grid-cols-2 gap-4">
+            <div className="editor-grid mt-3">
               <div className="space-y-2">
                 <Label htmlFor="trip-longitude">Longitude</Label>
                 <Input

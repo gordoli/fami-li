@@ -166,6 +166,80 @@ export const trips: Trip[] = [
     ],
   },
   {
+    slug: "paris",
+    title: "Paris",
+    subtitle: "A few autumn days, just for us.",
+    country: "France",
+    city: "Paris",
+    continent: "Europe",
+    year: 2017,
+    notes:
+      "A little October escape: riverside walks, warm pastries, and no particular hurry.",
+    date: "2017-10-10",
+    startDate: "2017-10-10",
+    endDate: "2017-10-14",
+    travelers: ["Dad", "Mom", "Gordon", "Emma"],
+    coordinates: [2.35, 48.85],
+    cover: "/images/paris.jpg",
+    cover_photo: "/images/paris.jpg",
+    coverAlt: "The Eiffel Tower rising above Paris in the evening light",
+    accent: "#9365c9",
+    story: [
+      "We had barely unpacked from our big summer adventure when we started talking about another little escape. Paris in October turned out to be exactly what we needed: five days, comfortable shoes, and the sort of weather that makes a warm café feel like the best place in the world.",
+      "We spent our mornings walking along the Seine and our afternoons following whichever street looked interesting. Dad photographed the bridges. Mom found a favorite bakery. Gordon and Emma made a very serious project of comparing pastries. By the second day, we had all stopped checking the time.",
+      "Our last evening was simple. A walk after dinner, the lights coming on along the river, and a few minutes together watching the Eiffel Tower. We had done a lot of traveling that year. This little trip reminded us that a few good days can hold just as much as a much bigger journey.",
+    ],
+    itinerary: [
+      {
+        day: "Day 01",
+        title: "An autumn arrival",
+        description:
+          "A neighborhood walk, an early dinner, and a first glimpse of the river.",
+      },
+      {
+        day: "Days 02–03",
+        title: "Along the Seine",
+        description:
+          "Bridges, bookstalls, a museum morning, and plenty of time for café stops.",
+      },
+      {
+        day: "Days 04–05",
+        title: "The scenic way home",
+        description:
+          "A slow day around Montmartre, a final riverside evening, and one last bakery visit.",
+      },
+    ],
+    photos: [
+      {
+        id: "paris-01",
+        title: "The city lights up",
+        src: "/images/paris.jpg",
+        alt: "The Eiffel Tower beside the Seine beneath a dusky sky",
+        caption:
+          "We had seen it in so many photographs. We still stopped and stared when it appeared at the end of the street.",
+        location: "Paris, France",
+      },
+      {
+        id: "paris-02",
+        title: "A favorite corner",
+        src: "/images/paris-streets.jpg",
+        alt: "Ornate lamps lighting the Pont Alexandre III bridge at dusk",
+        caption:
+          "Our plan was to walk for ten minutes before dinner. An hour later, we were still finding reasons to cross another bridge.",
+        location: "Paris, France",
+      },
+      {
+        id: "paris-03",
+        title: "One more evening walk",
+        src: "/images/paris-river.jpg",
+        alt: "The Eiffel Tower seen at the end of a Paris neighborhood street",
+        caption:
+          "A little colder than we expected, a little later than we planned, and one of our favorite moments of the week.",
+        location: "Paris, France",
+      },
+    ],
+  },
+  {
     slug: "china",
     title: "China",
     subtitle: "A journey back to our roots.",

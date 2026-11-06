@@ -82,6 +82,14 @@ export function Globe({
         Math.PI / 2 - 0.03,
   );
 
+  const projectedTrips = visibleTrips.flatMap((trip) => {
+    const point = trip.coordinates && projection(trip.coordinates);
+    return point ? [{ trip, point }] : [];
+  });
+  const highlightedPin = projectedTrips.find(
+    ({ trip }) => trip.slug === highlightedSlug,
+  );
+
   function beginDrag(event: PointerEvent<SVGSVGElement>) {
     hasDragged.current = false;
     if (
@@ -116,7 +124,7 @@ export function Globe({
 
   return (
     <div
-      className="globe-scene grid items-center gap-8 md:grid-cols-[1.3fr_0.7fr]"
+      className="globe-scene"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onFocusCapture={() => setIsFocused(true)}
@@ -125,7 +133,7 @@ export function Globe({
           setIsFocused(false);
       }}
     >
-      <div className="relative mx-auto w-full max-w-[560px]">
+      <div className="globe-visual">
         <svg
           className="globe-canvas w-full touch-none select-none"
           style={{ cursor: isDragging ? "grabbing" : "grab" }}
@@ -183,31 +191,44 @@ export function Globe({
             stroke="var(--globe-ocean)"
             strokeWidth="0.35"
           />
-          {visibleTrips.map((trip) => {
-            if (!trip.coordinates) return null;
-            const point = projection(trip.coordinates);
-            if (!point) return null;
+          {projectedTrips.map(({ trip, point }) => {
             const isHighlighted = trip.slug === highlightedSlug;
+            // Keep nearby city targets distinct while allowing a 40px target elsewhere.
+            const nearestPinDistance = Math.min(
+              ...projectedTrips
+                .filter((pin) => pin.trip.slug !== trip.slug)
+                .map((pin) =>
+                  Math.hypot(pin.point[0] - point[0], pin.point[1] - point[1]),
+                ),
+            );
+            const hitRadius = Math.max(
+              8,
+              Math.min(20, nearestPinDistance / 2 - 1),
+            );
             return (
               <g key={trip.slug}>
                 <circle
                   cx={point[0]}
                   cy={point[1]}
-                  r={isHighlighted ? 13 : 9}
+                  r={isHighlighted ? 16 : 12}
                   fill="var(--primary)"
                   opacity={0.2}
                 />
                 <foreignObject
-                  x={point[0] - 16}
-                  y={point[1] - 16}
-                  width={32}
-                  height={32}
-                  style={{ overflow: "visible" }}
+                  x={point[0] - 20}
+                  y={point[1] - 20}
+                  width={40}
+                  height={40}
+                  style={{ overflow: "visible", pointerEvents: "none" }}
                 >
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="globe-pin !h-8 !w-8 !rounded-full !p-0 hover:!bg-transparent focus-visible:!ring-[#7954d5]"
+                    className="globe-pin !h-10 !w-10 !rounded-full !p-0 hover:!bg-transparent focus-visible:!ring-primary"
+                    style={{
+                      pointerEvents: "auto",
+                      clipPath: `circle(${hitRadius}px at center)`,
+                    }}
                     aria-label={`Open ${trip.title}, ${trip.year}`}
                     onMouseEnter={() => setHighlightedSlug(trip.slug)}
                     onMouseLeave={() => setHighlightedSlug(null)}
@@ -218,36 +239,49 @@ export function Globe({
                         onSelect(trip);
                     }}
                   >
-                    <span className="block h-[11px] w-[11px] rounded-full border-2 border-[#ffffff] bg-primary shadow-sm" />
+                    <span className="block h-4 w-4 rounded-full border-2 border-[#ffffff] bg-primary shadow-sm" />
                   </Button>
                 </foreignObject>
-                {isHighlighted && (
-                  <g pointerEvents="none">
-                    <rect
-                      x={point[0] - 66}
-                      y={point[1] - 44}
-                      width={132}
-                      height={25}
-                      rx={3}
-                      fill="#211d29"
-                    />
-                    <text
-                      x={point[0]}
-                      y={point[1] - 28}
-                      textAnchor="middle"
-                      fill="#fff"
-                      fontSize={10}
-                      fontFamily="inherit"
-                    >
-                      {trip.title} · {trip.year}
-                    </text>
-                  </g>
-                )}
               </g>
             );
           })}
+          {highlightedPin && (
+            <foreignObject
+              x={Math.max(
+                8,
+                Math.min(GLOBE_SIZE - 184, highlightedPin.point[0] - 88),
+              )}
+              y={Math.max(
+                8,
+                Math.min(
+                  GLOBE_SIZE - 152,
+                  highlightedPin.point[1] > 170
+                    ? highlightedPin.point[1] - 164
+                    : highlightedPin.point[1] + 24,
+                ),
+              )}
+              width={176}
+              height={144}
+              pointerEvents="none"
+              style={{ overflow: "visible" }}
+            >
+              <div className="globe-preview" role="tooltip">
+                <Image
+                  src={highlightedPin.trip.cover}
+                  alt=""
+                  width={160}
+                  height={90}
+                  className="globe-preview-image h-[90px] w-[160px] rounded-[4px] object-cover"
+                />
+                <div className="globe-preview-caption">
+                  <strong>{highlightedPin.trip.title}</strong>
+                  <span>{highlightedPin.trip.year}</span>
+                </div>
+              </div>
+            </foreignObject>
+          )}
         </svg>
-        <div className="globe-instructions flex items-center justify-center gap-4 text-[11px] text-muted-foreground">
+        <div className="globe-instructions">
           <span className="flex items-center gap-2">
             <Move size={12} /> Drag to explore
           </span>
@@ -255,7 +289,7 @@ export function Globe({
           <Button
             variant="ghost"
             size="sm"
-            className="!h-7 !px-1 !text-[11px] !text-muted-foreground"
+            className="globe-rotation !text-muted-foreground"
             aria-label={
               prefersReducedMotion
                 ? "Globe rotation disabled by reduced motion preference"
@@ -280,16 +314,13 @@ export function Globe({
           </Button>
         </div>
       </div>
-      <div className="globe-sidebar mx-auto w-full max-w-[310px] pb-4">
-        <p className="mb-5 text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-          Our little corner of the world
-        </p>
+      <div className="globe-sidebar">
         <div className="divide-y divide-border">
           {trips.map((trip) => (
             <Button
               key={trip.slug}
               variant="ghost"
-              className="globe-trip !flex !h-auto !w-full !justify-start !gap-3 !rounded-none !px-0 !py-3 hover:!bg-transparent"
+              className="globe-trip hover:!bg-transparent"
               onMouseEnter={() => setHighlightedSlug(trip.slug)}
               onMouseLeave={() => setHighlightedSlug(null)}
               onFocus={() => setHighlightedSlug(trip.slug)}
@@ -301,14 +332,10 @@ export function Globe({
                 alt=""
                 width={44}
                 height={38}
-                className="h-[38px] w-11 rounded-[2px] object-cover"
+                className="globe-trip-image"
               />
-              <span className="flex-1 text-left text-[13px] font-medium">
-                {trip.title}
-              </span>
-              <span className="text-[11px] font-normal tabular-nums text-muted-foreground">
-                {trip.year}
-              </span>
+              <span className="globe-trip-title">{trip.title}</span>
+              <span className="globe-trip-year">{trip.year}</span>
               <ArrowUpRight size={13} className="text-muted-foreground" />
             </Button>
           ))}

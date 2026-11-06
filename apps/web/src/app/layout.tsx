@@ -1,22 +1,48 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
-const inter = Inter({
+const poppins = Poppins({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-poppins",
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  "https://fami-li-adventures.trace-7130.chatgpt.site";
 export const metadata: Metadata = {
-  title: "Fami-Li Adventures — A life of little adventures",
-  description:
-    "The places we went. The stories we brought home. A family travel album, 2016–2025.",
+  metadataBase: new URL(siteUrl),
+  title: "Fami-Li Adventures",
+  description: "The memories we made along the way. A family travel journal.",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: "Fami-Li Adventures",
+    title: "Fami-Li Adventures",
+    description: "The memories we made along the way.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1600,
+        height: 900,
+        alt: "Fami-Li Adventures — our pixel-chibi family standing on Earth",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Fami-Li Adventures",
+    description: "The memories we made along the way.",
+    images: ["/og-image.png"],
+  },
 };
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={inter.variable}>{children}</body>
+      <body className={poppins.variable}>{children}</body>
     </html>
   );
 }
