@@ -1,5 +1,10 @@
 "use client";
-import { useEffect, useRef, type PointerEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useSyncExternalStore,
+  type PointerEvent,
+} from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
@@ -15,6 +20,15 @@ type TimelineProps = {
   onSelect: (trip: Trip) => void;
 };
 
+const mobileQuery = "(max-width: 640px)";
+function subscribeToMobile(onChange: () => void) {
+  const query = window.matchMedia(mobileQuery);
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+const getIsMobile = () => window.matchMedia(mobileQuery).matches;
+const getServerIsMobile = () => false;
+
 export function Timeline({
   trips,
   activeIndex,
@@ -25,6 +39,11 @@ export function Timeline({
   const drag = useRef<{ x: number; scroll: number } | null>(null);
   const didDrag = useRef(false);
   const reducedMotion = useReducedMotion();
+  const isMobile = useSyncExternalStore(
+    subscribeToMobile,
+    getIsMobile,
+    getServerIsMobile,
+  );
   const initialIndex = useRef(activeIndex);
   useEffect(() => {
     if (window.matchMedia("(max-width: 640px)").matches) return;
@@ -131,16 +150,15 @@ export function Timeline({
                   key={trip.slug}
                   className={`timeline-card ${index === activeIndex ? "is-active" : ""}`}
                   data-trip-index={index}
-                  initial={
-                    reducedMotion
-                      ? false
-                      : { opacity: 0, x: -20, y: 18, scale: 0.96 }
-                  }
-                  whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-                  viewport={{ amount: 0.15, once: true }}
+                  initial={reducedMotion ? false : { opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ amount: isMobile ? 0.25 : 0.15, once: true }}
                   transition={{
                     duration: reducedMotion ? 0 : 0.65,
-                    delay: reducedMotion ? 0 : Math.min(index * 0.1, 0.4),
+                    delay:
+                      reducedMotion || isMobile
+                        ? 0
+                        : Math.min(index * 0.1, 0.4),
                     ease: [0.22, 1, 0.36, 1],
                   }}
                 >
